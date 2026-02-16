@@ -18,10 +18,17 @@ const server = http.createServer(app);
 const rawFrontEndUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 const FRONTEND_URL = rawFrontEndUrl.replace(/\/$/, '');
 
+const allowedOrigins = [
+  "https://real-time-poll-rooms-k07z9fc6w.vercel.app",
+  "https://real-time-poll-rooms-kappa.vercel.app",
+  "http://localhost:5173",
+  FRONTEND_URL
+];
+
 // Socket.io setup with CORS
 const io = new Server(server, {
   cors: {
-    origin: FRONTEND_URL,
+    origin: allowedOrigins,
     methods: ['GET', 'POST']
   }
 });
@@ -29,7 +36,15 @@ const io = new Server(server, {
 // Middleware
 app.use(helmet()); // Security headers
 app.use(cors({
-  origin: FRONTEND_URL,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(null, true); // Fallback to allow during testing if needed, or set to false for strictness
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
