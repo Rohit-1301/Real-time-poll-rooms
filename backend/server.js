@@ -14,10 +14,14 @@ const authRoutes = require('./routes/auth');
 const app = express();
 const server = http.createServer(app);
 
+// CORS origin normalization
+const rawFrontEndUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND_URL = rawFrontEndUrl.replace(/\/$/, '');
+
 // Socket.io setup with CORS
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: FRONTEND_URL,
     methods: ['GET', 'POST']
   }
 });
@@ -25,7 +29,7 @@ const io = new Server(server, {
 // Middleware
 app.use(helmet()); // Security headers
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: FRONTEND_URL,
   credentials: true
 }));
 app.use(express.json());
