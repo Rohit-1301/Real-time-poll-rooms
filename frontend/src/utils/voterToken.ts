@@ -6,7 +6,7 @@ const VOTER_TOKEN_KEY = 'poll_voter_token';
  * Get or create voter token
  * Token is stored in localStorage to track votes across sessions
  */
-export function getVoterToken() {
+export function getVoterToken(): string {
   let token = localStorage.getItem(VOTER_TOKEN_KEY);
   
   if (!token) {
@@ -20,6 +20,6 @@ export function getVoterToken() {
 /**
  * Clear voter token (for testing purposes)
  */
-export function clearVoterToken() {
+export function clearVoterToken(): void {
   localStorage.removeItem(VOTER_TOKEN_KEY);
 }
